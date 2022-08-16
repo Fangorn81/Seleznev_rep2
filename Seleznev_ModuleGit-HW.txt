@@ -1,0 +1,90 @@
+1. Сгенерируйте на вашей виртуальной машине с Linux (WSL) пару ключей для SSH соединения (публичный+приватный).
+~$ ls -la
+~$ ssh-keygen -t rsa
+~$ cat ./.ssh/id_rsa.pub
+
+2. Создайте папку Module6 в рабочей папке вашего git-репозитория.
+$ cd Seleznev_rep2
+$ mkdir Module6
+3. Создайте в папке Module6 папку mysshkey.
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ cd Module6
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ mkdir mysshkey
+
+
+4. Скопируйте туда файл публичной части ключа.
+peter@LAPTOP-GC1FFJR8:~$ cd ..ssh
+peter@LAPTOP-GC1FFJR8:~/.ssh$ cp id_rsa.pub ../Seleznev_rep2/Module6/mysshkey/
+
+5. Создайте в папке Module6 ещё три папки: alpha, beta, gamma
+6. Назначьте для каждой папки разные права доступа (по своему желанию).
+
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6/mysshkey$ cd ..
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ mkdir alpha
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ mkdir beta
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ mkdir gamma
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ ls -la
+total 0
+drwxr-xr-x 1 peter peter 512 Aug 16 13:50 .
+drwxr-xr-x 1 peter peter 512 Aug 16 13:32 ..
+drwxr-xr-x 1 peter peter 512 Aug 16 13:49 alpha
+drwxr-xr-x 1 peter peter 512 Aug 16 13:50 beta
+drwxr-xr-x 1 peter peter 512 Aug 16 13:50 gamma
+drwxr-xr-x 1 peter peter 512 Aug 16 13:48 mysshkey
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ chmod 755 alpha
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ chmod 722 beta
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ ls -la
+total 0
+drwxr-xr-x 1 peter peter 512 Aug 16 13:50 .
+drwxr-xr-x 1 peter peter 512 Aug 16 13:32 ..
+drwxr-xr-x 1 peter peter 512 Aug 16 13:49 alpha
+drwx-w--w- 1 peter peter 512 Aug 16 13:50 beta
+drwxr-xr-x 1 peter peter 512 Aug 16 13:50 gamma
+drwxr-xr-x 1 peter peter 512 Aug 16 13:48 mysshkey
+
+
+7. Создайте пользователя belhard и задайте для него пароль. (создание домашней папки по желанию)
+sudo useradd -m belhard
+8. Назначьте пользователя владельцем (owner) папок alpha и gamma.
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ sudo chown belhard alpha
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2/Module6$ sudo chown belhard gamma
+9. Добавьте в индекс (stage) и затем зафиксируйте все изменения (commit). Отправьте изменения на ваше хранилище.
+
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ git commit Module6/mysshkey/id_rsa.pub --message "My 2 commit"
+[main 2a0bff8] My 2 commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 Module6/mysshkey/id_rsa.pub
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ git status
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ eval `ssh-agent`
+Agent pid 1491
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ ssh-add ./.ssh/id_rsa
+./.ssh/id_rsa: No such file or directory
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ cd ..
+peter@LAPTOP-GC1FFJR8:~$ ssh-add ./.ssh/id_rsa
+Enter passphrase for ./.ssh/id_rsa:
+Identity added: ./.ssh/id_rsa (peter@LAPTOP-GC1FFJR8)
+peter@LAPTOP-GC1FFJR8:~$ git push Seleznev_rep2 master
+Everything up-to-date
+
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ git status
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+peter@LAPTOP-GC1FFJR8:~/Seleznev_rep2$ git push
+Enumerating objects: 6, done.
+Counting objects: 100% (6/6), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (5/5), 839 bytes | 279.00 KiB/s, done.
+Total 5 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:Fangorn81/Seleznev_rep2.git
+   9fb675c..2a0bff8  main -> main
+
+
+
+*** 10. Создайте коллизию изменений при объеденении веток (fetch) и решите.
